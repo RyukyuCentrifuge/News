@@ -43,8 +43,6 @@ function Update (props) {
     setCurrent(current - 1)
   }
 
-  const User = JSON.parse(localStorage.getItem('token'))
-
   useEffect(() => {
     axios.get('/categories').then(res => {
       setCategorieList(res.data)
@@ -62,18 +60,10 @@ function Update (props) {
   },[props.history.match.id])
 
   const handleSave = (type) => {
-    axios.post('/news', {
+    axios.patch(`/news/${props.history.match.id}`, {
       ...formInfo,
       "content": content,
-      "region": User.region ? User.region : '全球',
-      "author": User.username,
-      "roleId": User.roleId,
       "auditState": type,
-      "publishState": 0,
-      "createTime": Date.now(),
-      "star": 0,
-      "view": 0,
-      // "publishTime":0
     }).then(res => {
       navgate(type === 0 ? '/newsSand/newsmanage/draft' : '/newsSand/auditmanage/list')
       notification.info({

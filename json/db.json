@@ -517,9 +517,9 @@
       "id": 11
     },
     {
-      "title": "aaaaa",
-      "categoryId": 6,
-      "content": "<p>测试草稿箱</p>\n",
+      "title": "aaaaa123456",
+      "categoryId": 2,
+      "content": "<p>测试草稿箱</p>\n<ul>\n<li>测试测试</li>\n<li>测试测试</li>\n</ul>\n",
       "region": "全球",
       "author": "admin",
       "roleId": 1,
