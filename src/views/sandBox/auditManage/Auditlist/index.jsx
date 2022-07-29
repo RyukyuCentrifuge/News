@@ -60,9 +60,10 @@ function AuditList(props) {
         })
         break;
       case 2:
+        setDataSource(dataSource.filter(data=>data.id!==item.id))
         axios.patch(`/news/${item.id}`,{
           "publishState": 2,
-          "publishTime": new Date().now()
+          "publishTime": new Date().getTime()
         }).then(res=>{
           notification.info({
             message: '通知',
