@@ -1,11 +1,13 @@
-import { Table, Button, Modal } from 'antd'
+import { Table, Button, Modal, notification } from 'antd'
 import React, { useState, useEffect } from 'react'
 import { DeleteOutlined, EditOutlined, UpOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import axios from 'axios'
 import withRouter from '../../../../components/WithRouter'
+import { useNavigate } from 'react-router-dom'
 const { confirm } = Modal
 function Rolelist (props) {
   const [dataSource, setDataSource] = useState([])
+  const navgate = useNavigate()
   const columns = [
     {
       title: 'ID',
@@ -38,12 +40,25 @@ function Rolelist (props) {
             <Button shape='circle' icon={<EditOutlined />} onClick={() => {
               props.history.push(`/newsSand/newsmanage/update/${item.id}`)
             }}></Button>
-            <Button type='primary' shape='circle' icon={<UpOutlined />}></Button>
+            <Button type='primary' shape='circle' icon={<UpOutlined />} onClick={() => handleCheck(item.id)}></Button>
           </div>
         )
       }
     }
   ]
+
+  const handleCheck = (id) => {
+    axios.patch(`/news/${id}`, {
+      auditState: 1
+    }).then(res => {
+      navgate('/newsSand/auditmanage/list')
+      notification.info({
+        message: '通知',
+        description: `您可以到审核列表中查看您的新闻`,
+        placement: "bottomRight"
+      })
+    })
+  }
 
   const confirmMethod = (item) => {
     confirm({

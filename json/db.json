@@ -509,7 +509,7 @@
       "region": "全球",
       "author": "admin",
       "roleId": 1,
-      "auditState": 0,
+      "auditState": 1,
       "publishState": 0,
       "createTime": 1656901995701,
       "star": 0,
@@ -523,12 +523,26 @@
       "region": "全球",
       "author": "admin",
       "roleId": 1,
-      "auditState": 0,
+      "auditState": 1,
       "publishState": 0,
       "createTime": 1658824762863,
       "star": 0,
       "view": 0,
       "id": 12
+    },
+    {
+      "title": "测试新闻",
+      "categoryId": 3,
+      "content": "<ul>\n<li>测试新闻</li>\n<li>测试新闻</li>\n<li>测试新闻</li>\n</ul>\n",
+      "region": "全球",
+      "author": "admin",
+      "roleId": 1,
+      "auditState": 0,
+      "publishState": 0,
+      "createTime": 1659056972240,
+      "star": 0,
+      "view": 0,
+      "id": 13
     }
   ]
 }
