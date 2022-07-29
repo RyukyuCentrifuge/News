@@ -15,21 +15,33 @@ export default function UserList () {
   const addForm = useRef()
   const updataForm = useRef()
   const {roleId,region,username} = JSON.parse(localStorage.getItem("token")) 
+
+  // 分级别展示当前用户及当前用户之下管理的其他用户
+  
   useEffect(() => {
+    const roleObj = {
+      "1": "superadmin",
+      "2": "admin",
+      "3": "editor"
+    }
     axios.get('/users?_expand=role').then(res => {
       const list = res.data
-      setDataSource(roleId === 1 ? list : [
+      setDataSource(roleObj[roleId] === 'superadmin' ? list : [
         ...list.filter(item=>item.username===username),
-        ...list.filter(item=>item.region === region && item.roleId === 3)
+        ...list.filter(item=>item.region === region && roleObj[item.roleId] === 'editor')
       ])
     })
   }, [roleId,region,username])
+
+  // 区域
   useEffect(() => {
     axios.get('/regions').then(res => {
       const list = res.data
       setRegionList(list)
     })
   }, [])
+
+  // 角色
   useEffect(() => {
     axios.get('/roles').then(res => {
       const list = res.data
@@ -130,6 +142,7 @@ export default function UserList () {
     setcurrent(item)
   }
 
+  // 添加用户
   const addRoleList = () => {
     addForm.current.validateFields().then(res => {
       setIsVisible(false)
@@ -139,6 +152,7 @@ export default function UserList () {
         "roleState": true,
         "default": false
       }).then(res => {
+        // 这里是为了让不刷新页面就显示出来角色名称
         setDataSource([...dataSource, {
           ...res.data,
           role: roleList.filter(item => item.id === res.data.roleId)[0]
@@ -156,6 +170,7 @@ export default function UserList () {
     })
   }
 
+  // 更新用户
   const UpdataRoleList = () => {
     updataForm.current.validateFields().then(res => {
       setIsUpdata(false)

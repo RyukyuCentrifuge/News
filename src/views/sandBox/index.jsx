@@ -5,6 +5,7 @@ import SideMenu from '../../components/sandbox/SideMenu'
 import TopHeader from '../../components/sandbox/TopHeader'
 import './index.css'
 import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 const { Content } = Layout;
 export default function NewsSandBox () {
   NProgress.start()
