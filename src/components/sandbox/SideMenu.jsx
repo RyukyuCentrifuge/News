@@ -3,10 +3,9 @@ import { Layout, Menu } from 'antd';
 import '../index.css'
 import WithRouter from '../../components/WithRouter'
 import axios from 'axios';
-// import { NavLink } from 'react-router-dom';
+import { connect } from 'react-redux'
 const { Sider } = Layout;
 function SideMenu (props) {
-  const [collapsed] = useState(false)
   const [menuList, setMenuList] = useState([])
   useEffect(() => {
     axios.get("/rights?_embed=children").then(res => {
@@ -55,7 +54,7 @@ function SideMenu (props) {
   const slectKeys = [props.history.location.pathname]
   const openKeys = props.history.location.pathname === '/newsSand/home' ? [''] : ['/' + props.history.location.pathname.split('/').slice(1, -1).join('/')]
   return (
-    <Sider trigger={null} collapsible collapsed={collapsed}>
+    <Sider trigger={null} collapsible collapsed={props.isCollapsed}>
       <div style={{ display: 'flex', height: '100%', "flexDirection": "column" }}>
         <div className="logo" >全球新闻发布管理系统</div>
         <div style={{ flex: 1, "overflow": "auto" }}>
@@ -72,4 +71,10 @@ function SideMenu (props) {
     </Sider>
   )
 }
-export default WithRouter(SideMenu)
+
+const mapStateToProps = ({CollApsedReducer:{isCollapsed}})=>{
+  return {
+    isCollapsed
+  }
+}
+export default connect(mapStateToProps)(WithRouter(SideMenu))
