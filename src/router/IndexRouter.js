@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Navigate, useRoutes } from 'react-router-dom'
 import Mylazy from './lazyLoad'
 import AuthComponent from './AuthComponents'
-import SandBox from '../views/sandBox'
 import axios from 'axios'
 import getList from './Dynamic'
 export default function IndexRouter () {
@@ -16,7 +15,7 @@ export default function IndexRouter () {
       setBackRouteList([...res[0].data, ...res[1].data])
     })
   }, [])
-  
+
   const element = useRoutes([
     {
       path: '/login',
@@ -24,9 +23,8 @@ export default function IndexRouter () {
     },
     {
       path: '/newsSand',
-      element: <SandBox />,
+      element: Mylazy('sandBox'),
       children: getList(BackRouteList)
-
     },
     {
       path: '/',

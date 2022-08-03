@@ -4,10 +4,14 @@ import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@ant-design/
 import WithRouter from '../WithRouter'
 // 引入发布者模块
 import { connect } from 'react-redux';
+import { useNavigate } from 'react-router-dom'
 
 const { Header } = Layout;
 
 function TopHeader (props) {
+  const navgate = useNavigate()
+  const token = localStorage.getItem('token')
+  if(!token) return navgate('/login')  // 为了防止直接删除token时报错
   const { role: { roleName }, username } = JSON.parse(localStorage.getItem('token'))
   const menu = (
     <Menu

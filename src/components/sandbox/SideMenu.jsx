@@ -4,14 +4,21 @@ import '../index.css'
 import WithRouter from '../../components/WithRouter'
 import axios from 'axios';
 import { connect } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 const { Sider } = Layout;
 function SideMenu (props) {
+  const navgate = useNavigate()
   const [menuList, setMenuList] = useState([])
   useEffect(() => {
     axios.get("/rights?_embed=children").then(res => {
       setMenuList(res.data)
     })
   }, [])
+
+  const token = localStorage.getItem('token')
+  if(!token) return navgate('/login')  // 没有token，则直接跳转到login页  这是防止直接删除token报错
+
+  const { role: { rights, roleType } } = JSON.parse(localStorage.getItem('token'))
 
   function getItem (label, key, children, type) {
     return {
@@ -21,7 +28,7 @@ function SideMenu (props) {
       type,
     };
   }
-  const { role: { rights, roleType } } = JSON.parse(localStorage.getItem('token'))
+  
   const myitem = (data) => {
     if (data) {
       return (data.map(val => {
@@ -45,6 +52,7 @@ function SideMenu (props) {
     }
   }
   const items = myitem(menuList)
+  
   function changehandle (item) {
     if (item.key === window.location.pathname) {
       return
