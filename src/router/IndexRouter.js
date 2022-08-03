@@ -23,6 +23,14 @@ export default function IndexRouter () {
       element: Mylazy('login'),
     },
     {
+      path: '/news',
+      element: Mylazy('news/News'),
+    },
+    {
+      path: '/detail/:id',
+      element: Mylazy('news/Detail'),
+    },
+    {
       path: '/newsSand',
       element: <SandBox />,  // 这里必须是这么写，否则在路由跳转的时候会出现闪烁
       children: getList(BackRouteList)
