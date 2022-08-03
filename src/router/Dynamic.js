@@ -79,35 +79,66 @@ const LocalRouterMap = {
   }
 }
 
-const getToken = (val) => {
-  const isLogin = JSON.parse(localStorage.getItem('token'))
-  if (isLogin) {
-    const { role: { rights, roleType } } = JSON.parse(localStorage.getItem("token"))
-    function checkRoute () {
-      return LocalRouterMap[val.key] && (val.pagepermisson || val.routepermisson)
+
+class Token {
+  constructor() {
+    this.isLogin = undefined
+    this.rights = undefined
+    this.roleType = undefined
+    // 类自调用获取token
+    this.#getToken()
+    if (this.isLogin) {
+      const { role: { rights, roleType } } = this.isLogin
+      this.rights = rights
+      this.roleType = roleType
     }
-    let checkPermission = () => {
-      if (roleType === 1) {
-        return rights.checked?.includes(val.key)
-      } else {
-        return rights.includes(val.key)
-      }
-    }
-    return {
-      checkRoute,
-      checkPermission
+  }
+
+  #getToken () {
+    this.isLogin = JSON.parse(localStorage.getItem('token'))
+  }
+
+  checkRoute (val) {
+    return LocalRouterMap[val.key] && (val.pagepermisson || val.routepermisson)
+  }
+  checkPermission (val) {
+    if (this.roleType === 1) {
+      return this.rights.checked?.includes(val.key)
+    } else {
+      return this.rights.includes(val.key)
     }
   }
 }
 
+// 这里是第一版时代码 会导致第一次登录无法正常显示页面
+//#region 
+/* const isLogin = localStorage.getItem('token')
+if (isLogin) {
+  const { role: { rights, roleType } } = JSON.parse(localStorage.getItem("token"))
 
+  checkRoute = (val) => {
+    return LocalRouterMap[val.key] && (val.pagepermisson || val.routepermisson)
+  }
+  checkPermission = (val) => {
+    if (roleType === 1) {
+      return rights.checked?.includes(val.key)
+    } else {
+      return rights.includes(val.key)
+    }
+  }
+} */
+//#endregion
+
+// const token = new Token() // 在这里调用会导致第一次登录无法正常显示页面
+
+let checkRoute = null, checkPermission = null
 const getList = (BackRouteList) => {
   if (BackRouteList.length > 0) {
+    const token = new Token()
     let list = BackRouteList.map(val => {
       let configureList
-      const token = getToken(val)
-      const checkRoute = token?.checkRoute(val)
-      const checkPermission = token?.checkPermission(val)
+      checkRoute = token.isLogin && token.checkRoute(val)
+      checkPermission = token.isLogin && token.checkPermission(val)
       if (checkRoute && checkPermission) {
         configureList = {
           path: LocalRouterMap[val.key] && LocalRouterMap[val.key].path,
