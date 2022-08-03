@@ -10,14 +10,14 @@ export default function UserList () {
   const [roleList, setRoleList] = useState([])
   const [regionList, setRegionList] = useState([])
   const [isUpdata, setIsUpdata] = useState(false)
-  const [isUpdataDisabled,setIsUpdataDisabled] = useState(false)
+  const [isUpdataDisabled, setIsUpdataDisabled] = useState(false)
   const [current, setcurrent] = useState(null)
   const addForm = useRef()
   const updataForm = useRef()
-  const {roleId,region,username} = JSON.parse(localStorage.getItem("token")) 
+  const { roleId, region, username } = JSON.parse(localStorage.getItem("token"))
 
   // 分级别展示当前用户及当前用户之下管理的其他用户
-  
+
   useEffect(() => {
     const roleObj = {
       "1": "superadmin",
@@ -25,13 +25,14 @@ export default function UserList () {
       "3": "editor"
     }
     axios.get('/users?_expand=role').then(res => {
+      console.log(res.data);
       const list = res.data
       setDataSource(roleObj[roleId] === 'superadmin' ? list : [
-        ...list.filter(item=>item.username===username),
-        ...list.filter(item=>item.region === region && roleObj[item.roleId] === 'editor')
+        ...list.filter(item => item.username === username || (item.region === region && roleObj[item.roleId] === 'editor')),
+        // ...list.filter(item => )
       ])
     })
-  }, [roleId,region,username])
+  }, [roleId, region, username])
 
   // 区域
   useEffect(() => {
@@ -52,17 +53,17 @@ export default function UserList () {
     {
       title: '区域',
       dataIndex: 'region',
-      filters:[
-        ...regionList.map(item=>({
-          text:item.title,
-          value:item.value
+      filters: [
+        ...regionList.map(item => ({
+          text: item.title,
+          value: item.value
         })),
         {
-          text:'全球',
-          value:''
+          text: '全球',
+          value: ''
         }
       ],
-      onFilter:(value,item)=>item.region===value,
+      onFilter: (value, item) => item.region === value,
       render: (region) => {
         if (region === '') {
           return '全球'
@@ -133,9 +134,9 @@ export default function UserList () {
 
   async function handleUpdata (item) {
     await setIsUpdata(true)
-    if(item.roleId === 1){
+    if (item.roleId === 1) {
       await setIsUpdataDisabled(true)
-    }else{
+    } else {
       await setIsUpdataDisabled(false)
     }
     await updataForm.current.setFieldsValue(item)
@@ -174,18 +175,18 @@ export default function UserList () {
   const UpdataRoleList = () => {
     updataForm.current.validateFields().then(res => {
       setIsUpdata(false)
-      setDataSource(dataSource.map(item=>{
-        if(item.id === current.id){
+      setDataSource(dataSource.map(item => {
+        if (item.id === current.id) {
           return {
             ...item,
             ...res,
-            role:roleList.filter(data=>data.id===res.roleId)[0]
+            role: roleList.filter(data => data.id === res.roleId)[0]
           }
         }
         return item
       }))
       setIsUpdataDisabled(!isUpdataDisabled)
-      axios.patch(`/users/${current.id}`,res)
+      axios.patch(`/users/${current.id}`, res)
     })
   }
 
@@ -211,8 +212,8 @@ export default function UserList () {
         title="更新用户"
         okText="确定"
         cancelText="取消"
-        onCancel={() => { 
-          setIsUpdata(false) 
+        onCancel={() => {
+          setIsUpdata(false)
           setIsUpdataDisabled(!isUpdataDisabled)
         }}
         onOk={() => { UpdataRoleList() }}

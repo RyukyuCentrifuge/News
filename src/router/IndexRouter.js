@@ -24,7 +24,7 @@ export default function IndexRouter () {
     },
     {
       path: '/newsSand',
-      element: <SandBox />,
+      element: <SandBox />,  // 这里必须是这么写，否则在路由跳转的时候会出现闪烁
       children: getList(BackRouteList)
     },
     {
@@ -33,10 +33,10 @@ export default function IndexRouter () {
         <Navigate to='/newsSand' />
       </AuthComponent>
     },
-    // {
-    //   path: '*',
-    //   element: Mylazy('notFount'),
-    // }
+    {
+      path: '*',
+      element: Mylazy('notFount'),
+    }
   ])
   return (
     element
