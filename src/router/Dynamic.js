@@ -37,11 +37,11 @@ const LocalRouterMap = {
     path: 'newsmanage/category',
     element: Mylazy('sandBox/newsmanage/Category')
   },
-  "/newsSand/newsmanage/preview/:id":{
+  "/newsSand/newsmanage/preview/:id": {
     path: 'newsmanage/preview/:id',
     element: Mylazy('sandBox/newsmanage/Preview')
   },
-  "/newsSand/newsmanage/update/:id":{
+  "/newsSand/newsmanage/update/:id": {
     path: 'newsmanage/update/:id',
     element: Mylazy('sandBox/newsmanage/Update')
   },
@@ -79,39 +79,46 @@ const LocalRouterMap = {
   }
 }
 
-let checkRoute = null;
-let checkPermission = null
-
-const isLogin = localStorage.getItem('token')
-if (isLogin) {
-  const { role: { rights, roleType } } = JSON.parse(localStorage.getItem("token"))
-
-  checkRoute = (val) => {
-    return LocalRouterMap[val.key] && (val.pagepermisson || val.routepermisson)
-  }
-  checkPermission = (val) => {
-    if (roleType === 1) {
-      return rights.checked?.includes(val.key)
-    } else {
-      return rights.includes(val.key)
+const getToken = (val) => {
+  const isLogin = JSON.parse(localStorage.getItem('token'))
+  if (isLogin) {
+    const { role: { rights, roleType } } = JSON.parse(localStorage.getItem("token"))
+    function checkRoute () {
+      return LocalRouterMap[val.key] && (val.pagepermisson || val.routepermisson)
+    }
+    let checkPermission = () => {
+      if (roleType === 1) {
+        return rights.checked?.includes(val.key)
+      } else {
+        return rights.includes(val.key)
+      }
+    }
+    return {
+      checkRoute,
+      checkPermission
     }
   }
 }
+
 
 const getList = (BackRouteList) => {
   if (BackRouteList.length > 0) {
     let list = BackRouteList.map(val => {
       let configureList
-      if (checkRoute !== null && checkPermission !== null) {
-        if (checkRoute(val) && checkPermission(val)) {
-          configureList = {
-            path: LocalRouterMap[val.key] && LocalRouterMap[val.key].path,
-            element: LocalRouterMap[val.key] && LocalRouterMap[val.key].element
-          }
+      const token = getToken(val)
+      const checkRoute = token?.checkRoute(val)
+      const checkPermission = token?.checkPermission(val)
+      if (checkRoute && checkPermission) {
+        configureList = {
+          path: LocalRouterMap[val.key] && LocalRouterMap[val.key].path,
+          element: LocalRouterMap[val.key] && LocalRouterMap[val.key].element
         }
       }
       return configureList
     });
+    let newList = list.filter(item => {
+      return item !== undefined
+    })
     let supplementList = [
       {
         path: '',
@@ -122,9 +129,7 @@ const getList = (BackRouteList) => {
         element: Mylazy('notFount'),
       },
     ]
-    let newList = list.filter(item => {
-      return item !== undefined
-    })
+
     list = [...newList, ...supplementList]
     return list
   }
